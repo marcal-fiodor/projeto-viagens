@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Formulário de Viagem Completo</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="shortcut icon" href="img/favicon.png" type="image/x-icon">
+</head>
+<body>
+    <div id="cabecalho">
+        <header>
+            <div class="container-topo">
+                <a href="index (2).html" class="logo">
+                    <img src="img/favicon.png" alt="Logo Viagens.com">
+                </a>
+                <h1 id="nome-site"><a href="index (2).html">Viagens.com</a></h1>
+                <nav id="navegacao">
+                    <ul>
+                        <li><a href="index (2).html">Sobre nós</a></li>
+                        <li><a href="universal.html">Universal</a></li>
+                        <li><a href="pacote.html">Pacotes</a></li>
+                        <li><a href="disney.html">Disney</a></li>
+                        <li><a href="inicio.html">Início</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </header>
+    </div>
+
+  <h2>Formulário de Viagem</h2>
+
+  <!-- Seletor de tipo de viagem -->
+  <label for="tipoViagem">Tipo de viagem:</label>
+  <select id="tipoViagem">
+    <option value="">-- Selecione --</option>
+    <option value="nacional">Nacional</option>
+    <option value="internacional">Internacional</option>
+  </select>
+
+  <!-- Seção de destinos (estado ou país) -->
+  <div id="destinoSection" class="hidden">
+    <label for="destino">Destino:</label>
+    <select id="destino">
+      <option value="">-- Selecione um destino --</option>
+    </select>
+  </div>
+
+  <!-- Seção de cidades -->
+  <div id="cidadeSection" class="hidden">
+    <label for="cidade">Cidade:</label>
+    <select id="cidade">
+      <option value="">-- Selecione uma cidade --</option>
+    </select>
+  </div>
+
+  <!-- Seção de lugares para alugar -->
+  <div id="aluguelSection" class="hidden">
+    <label for="aluguel">Lugar para alugar:</label>
+    <select id="aluguel">
+      <option value="">-- Selecione um lugar --</option>
+    </select>
+  </div>
+
+  <!-- Botão de confirmação -->
+  <div id="buttonSection" class="hidden">
+    <button id="botaoConfirmar">Confirmar</button>
+  </div>
+
+  <!-- Container para mostrar os quartos disponíveis -->
+  <div id="quartosContainer" class="hidden"></div>
+
+  <script>
+    // Dados de destinos e hospedagens
+    const dados = {
+      nacional: {
+        "São Paulo": {
+          "São Paulo (Capital)": ["Hotel Paulista", "Hostel Vila Madá"],
+          "Campinas": ["Hotel Premium", "Pousada do Centro"]
+        },
+        "Bahia": {
+          "Salvador": ["Hotel Sol", "Pousada Mar Azul"],
+          "Porto Seguro": ["Resort Paraíso", "Hotel Atlântico"],
+          "Ilhéus": ["Pousada do Mar", "Hotel Costa do Cacau"]
+        },
+        "Rio de Janeiro": {
+          "Rio de Janeiro (Capital)": ["Copacabana Palace", "Hotel Ipanema"],
+          "Búzios": ["Pousada Geribá", "Hotel Praia Brava"]
+        },
+        "Rio Grande do Sul": {
+          "Porto Alegre": ["Hotel Centro", "Pousada Gaúcha"],
+          "Gramado": ["Hotel das Hortênsias", "Resort da Serra"]
+        },
+        "Minas Gerais": {
+          "Belo Horizonte": ["Hotel Savassi", "Pousada Pampulha"],
+          "Ouro Preto": ["Hotel Histórico", "Pousada Imperial"]
+        }
+      },
+      internacional: {
+        "Japão": {
+          "Tóquio": ["Hotel Sakura", "Ryokan Central"],
+          "Quioto": ["Hotel Zen", "Pousada do Templo"]
+        },
+        "Estados Unidos": {
+          "Nova York": ["Hotel Times", "Brooklyn Hostel"],
+          "Los Angeles": ["Beverly Hotel", "Hollywood Inn"]
+        },
+        "França": {
+          "Paris": ["Hotel Eiffel", "Pousada do Louvre"],
+          "Nice": ["Hotel Côte d'Azur", "Pousada Riviera"]
+        },
+        "Inglaterra": {
+          "Londres": ["London Hotel", "Pousada Big Ben"],
+          "Manchester": ["Hotel Red", "Pousada Old Trafford"]
+        },
+        "Argentina": {
+          "Buenos Aires": ["Hotel Recoleta", "Hostel Palermo"],
+          "Mendoza": ["Pousada dos Andes", "Hotel Vinho"]
+        }
+      }
+    };
+
+    // Dados de quartos disponíveis por hotel
+    const quartosDisponiveis = {
+      "Hotel Paulista": [
+        { nome: "Suíte Business Paulista", preco: "R$180", imagem: "https://picsum.photos/id/1018/300/200" },
+        { nome: "Suíte Vista Avenida", preco: "R$250", imagem: "https://picsum.photos/id/1015/300/200" },
+        { nome: "Suíte Cobertura Luxo", preco: "R$450", imagem: "https://picsum.photos/id/1019/300/200" }
+      ],
+      "Hostel Vila Madá": [
+        { nome: "Cama Compartilhada Madá", preco: "R$80", imagem: "https://picsum.photos/id/1025/300/200" },
+        { nome: "Suíte Vila Madá", preco: "R$120", imagem: "https://picsum.photos/id/1020/300/200" }
+      ],
+      // ... (outros hotéis mantidos sem mudanças)
+      "Hotel Eiffel": [
+        { nome: "Suíte Panorâmica Torre Eiffel", preco: "R$900", imagem: "https://picsum.photos/id/1013/300/200" },
+        { nome: "Quarto Clássico Parisiense", preco: "R$550", imagem: "https://picsum.photos/id/1014/300/200" }
+      ],
+      "Pousada do Louvre": [
+        { nome: "Quarto Artístico Louvre", preco: "R$400", imagem: "https://picsum.photos/id/1016/300/200" },
+        { nome: "Suíte Charmosa Paris", preco: "R$650", imagem: "https://picsum.photos/id/1017/300/200" }
+      ]
+    };
+
+    // Referência aos elementos do HTML
+    const tipoViagem = document.getElementById("tipoViagem");
+    const destinoSection = document.getElementById("destinoSection");
+    const destino = document.getElementById("destino");
+    const cidadeSection = document.getElementById("cidadeSection");
+    const cidade = document.getElementById("cidade");
+    const aluguelSection = document.getElementById("aluguelSection");
+    const aluguel = document.getElementById("aluguel");
+    const botaoSection = document.getElementById("buttonSection");
+    const botaoConfirmar = document.getElementById("botaoConfirmar");
+    const quartosContainer = document.getElementById("quartosContainer");
+
+    // Quando mudar o tipo de viagem (nacional/internacional)
+    tipoViagem.addEventListener("change", () => {
+      resetSelect(destino, "-- Selecione um destino --");
+      resetSelect(cidade, "-- Selecione uma cidade --");
+      resetSelect(aluguel, "-- Selecione um lugar --");
+      hideAll();
+      quartosContainer.innerHTML = "";
+
+      if (tipoViagem.value) {
+        destinoSection.classList.remove("hidden");
+        Object.keys(dados[tipoViagem.value]).forEach(dest => {
+          const opt = document.createElement("option");
+          opt.value = dest;
+          opt.textContent = dest;
+          destino.appendChild(opt);
+        });
+      }
+    });
+
+    // Quando mudar o destino (estado/país)
+    destino.addEventListener("change", () => {
+      resetSelect(cidade, "-- Selecione uma cidade --");
+      resetSelect(aluguel, "-- Selecione um lugar --");
+      hideAll([destinoSection]);
+      quartosContainer.innerHTML = "";
+
+      const tipo = tipoViagem.value;
+      const destinoSelecionado = destino.value;
+
+      if (destinoSelecionado) {
+        cidadeSection.classList.remove("hidden");
+        Object.keys(dados[tipo][destinoSelecionado]).forEach(c => {
+          const opt = document.createElement("option");
+          opt.value = c;
+          opt.textContent = c;
+          cidade.appendChild(opt);
+        });
+      }
+    });
+
+    // Quando mudar a cidade
+    cidade.addEventListener("change", () => {
+      resetSelect(aluguel, "-- Selecione um lugar --");
+      hideAll([destinoSection, cidadeSection]);
+      quartosContainer.innerHTML = "";
+
+      const tipo = tipoViagem.value;
+      const destinoSelecionado = destino.value;
+      const cidadeSelecionada = cidade.value;
+
+      if (cidadeSelecionada) {
+        aluguelSection.classList.remove("hidden");
+        dados[tipo][destinoSelecionado][cidadeSelecionada].forEach(local => {
+          const opt = document.createElement("option");
+          opt.value = local;
+          opt.textContent = local;
+          aluguel.appendChild(opt);
+        });
+      }
+    });
+
+    // Mostrar botão "Confirmar" quando uma hospedagem for escolhida
+    aluguel.addEventListener("change", () => {
+      botaoSection.classList.toggle("hidden", !aluguel.value);
+    });
+
+    // Quando clicar no botão "Confirmar"
+    botaoConfirmar.addEventListener("click", () => {
+      if (!tipoViagem.value || !destino.value || !cidade.value || !aluguel.value) {
+        alert("Por favor, preencha todas as seleções antes de confirmar.");
+        return;
+      }
+
+      const hotel = aluguel.value;
+      quartosContainer.innerHTML = "";
+
+      if (quartosDisponiveis[hotel]) {
+        quartosContainer.classList.remove("hidden");
+        quartosDisponiveis[hotel].forEach(quarto => {
+          const div = document.createElement("div");
+          div.className = "quarto";
+          div.innerHTML = `
+            <img src="${quarto.imagem}" alt="${quarto.nome}">
+            <h3>${quarto.nome}</h3>
+            <p>Preço: ${quarto.preco}</p>
+          `;
+          quartosContainer.appendChild(div);
+        });
+      } else {
+        quartosContainer.classList.add("hidden");
+        alert("Nenhuma informação de quartos para esse hotel ainda.");
+      }
+    });
+
+    // Função para resetar selects com texto personalizado
+    function resetSelect(select, texto = "-- Selecione --") {
+      select.innerHTML = `<option value="">${texto}</option>`;
+    }
+
+    // Oculta todas as seções, exceto as que estão na lista "exceptions"
+    function hideAll(exceptions = []) {
+      [cidadeSection, aluguelSection, botaoSection, quartosContainer].forEach(el => {
+        if (!exceptions.includes(el)) el.classList.add("hidden");
+      });
+    }
+  </script>
+   <div id="rodape">
+        <footer>
+            <h3>Redes Socias</h3>
+            <ul class="lista-redes-socias">
+                <li><img src="img/instagram (1).png" alt="Logo Instagram"><a href="https://www.instagram.com/">Instagram</a></li>
+                <li><img src="img/x_logo (1).png" alt="Logo X"><a href="https://x.com/">X</a></li>
+                <li><img src="img/youtube_logo (1) (1).png" alt="Logo YouTube"><a href="https://www.youtube.com/">YouTube</a></li>
+            </ul>
+            <p>© Todos os direitos reservados.</p>
+        </footer>
+    </div>
+
+</body>
+</html>
